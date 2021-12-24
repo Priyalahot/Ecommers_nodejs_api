@@ -1,16 +1,7 @@
-exports.success = (status,message,data)=>{
+exports.api_response = (status,message,data)=>{
     return {
         status:status,
         message:message,
         data,data
     };
 };
-
-exports.failure = (status,message,data)=>{
-    return {
-        status:status,
-        message:message,
-        data,data
-    };
-};
-
