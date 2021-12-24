@@ -12,11 +12,6 @@ app.use(express.json());
 
 app.use("/api/v1/products",product_router);
 
-app.get('/hh', function(req, res){
-    res.write("Welcome");
-    res.end();
-});
-
-app.listen(8080,function(){
+app.listen(process.env.PORT,()=>{
     console.log("server start");
 });
