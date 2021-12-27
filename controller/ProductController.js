@@ -1,8 +1,16 @@
+const { validationResult } = require("express-validator");
 const { api_response } = require("../interface/ApiResponse");
 const Product = require("../model/Product");
 
 exports.create_product = async (req,res)=>{
   try {
+    const errors = validationResult(req); // Finds the validation errors in this request and wraps them in an object with handy functions
+
+    if (!errors.isEmpty()) {
+      res.status(422).json({ errors: errors.array() });
+      return;
+    }
+
       const product = await Product.create(req.body);
       res.status(201).json(api_response(true,"Product created",product));      
   } catch (error) {
