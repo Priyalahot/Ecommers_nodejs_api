@@ -1,6 +1,7 @@
 const { validationResult } = require("express-validator");
 const { api_response } = require("../interface/ApiResponse");
 const Product = require("../model/Product");
+const paginate = require('express-paginate');
 
 exports.create_product = async (req,res)=>{
   try {
@@ -20,8 +21,18 @@ exports.create_product = async (req,res)=>{
 
 exports.show_products = async (req,res)=>{
     try {
-        const products = await Product.find();
-        res.status(200).json(api_response(true,"Retrive api_responsefully",products));
+        const [ results, itemCount ] = await Promise.all([
+            Product.find({}).limit(req.query.limit).skip(req.skip).lean().exec(),
+            Product.count({})
+          ]);
+        const pageCount = Math.ceil(itemCount / req.query.limit);
+        res.json({
+            object: 'list',
+            has_more: paginate.hasNextPages(req)(pageCount),
+            data: results
+          });
+        // const products = await Product.find();
+        // res.status(200).json(api_response(true,"Retrive api_responsefully",products));
     } catch (error) {
         res.status(401).json(api_response(false,`Something went wrong! Please try again ${error}`,[]));
     }
